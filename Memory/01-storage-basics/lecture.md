@@ -1,0 +1,120 @@
+## Part 0 · Bits & Bytes (foundations)
+
+**Core facts**
+
+* A **bit** is 0 or 1.
+* A **byte** is 8 bits and is the **smallest addressable unit** on mainstream CPUs (x86/x86‑64, ARM/ARM64). Each memory address names one **byte**.
+* A **word** is the CPU’s natural register size (often 32 or 64 bits). It is **not** the smallest addressable unit.
+* Addresses count bytes; **types** decide how many bytes to read/write starting at that address.
+
+
+
+* x86/x86‑64 and ARM/ARM64 in practice: **little‑endian**. Networking uses **big‑endian** (“network byte order”).
+
+### Alignment (just enough)
+
+* Compilers prefer storing a 4‑byte `int` at an address divisible by 4, an 8‑byte `long`/`double` at a multiple of 8.
+* **x86** tolerates unaligned accesses (slower). Some architectures may fault or require special handling.
+* Structures may include **padding** to meet alignment; this affects `sizeof` and memory layout.
+
+### Signedness & ranges (two’s complement)
+
+* Unsigned 8‑bit: 0…255 (0x00…0xFF). Signed 8‑bit: −128…127.
+* Unsigned overflow wraps by definition; **signed overflow is undefined behavior** in C.
+
+### Units
+
+* 1 **byte** = 8 bits. 1 **KiB** = 1024 bytes. 1 **MiB** = 1024 KiB. Use KiB/MiB/GiB for precision; KB/MB/GB are often used loosely.
+
+---
+
+## Visual map (conceptual address space)
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#ffffff','lineColor':'#94a3b8','fontSize':'16px','fontFamily':'Inter, ui-sans-serif','edgeLabelBackground':'#ffffff'}}}%%
+flowchart TD
+  high[High addresses]
+  low[Low addresses]
+
+  subgraph S[Stack — function locals]
+    direction TB
+    Sinfo["• Fast, automatic<br/>• Limited size per thread<br/>• Grows downward (↓)"]
+  end
+
+  subgraph M[Mapped regions — OS-provided]
+    direction TB
+    Minfo["• Shared libraries<br/>• Memory‑mapped files<br/>• Some large allocations"]
+  end
+
+  subgraph H[Heap — malloc/free]
+    direction TB
+    Hinfo["• Flexible sizes<br/>• You manage lifetime<br/>• Grows upward (↑)"]
+  end
+
+  subgraph G[Static / Globals — whole program]
+    direction TB
+    Ginfo["• Exist for entire run<br/>• Initialized before main()<br/>• Good for true constants/state"]
+  end
+
+  high --> S --> M --> H --> G --> low
+
+  classDef addr fill:#f3f4f6,stroke:#6b7280,color:#374151,stroke-dasharray: 5 5,stroke-width:1px;
+  classDef stack fill:#fef3c7,stroke:#b45309,color:#111827,stroke-width:1.5px;
+  classDef mapped fill:#cffafe,stroke:#0e7490,color:#111827,stroke-width:1.5px;
+  classDef heap fill:#dcfce7,stroke:#15803d,color:#111827,stroke-width:1.5px;
+  classDef static fill:#fee2e2,stroke:#b91c1c,color:#111827,stroke-width:1.5px;
+
+  class high,low addr;
+  class S,Sinfo stack;
+  class M,Minfo mapped;
+  class H,Hinfo heap;
+  class G,Ginfo static;
+```
+
+> This is a **conceptual** layout; exact addresses change every run due to ASLR (address randomization). The relative roles remain the same.
+
+---
+
+## One-sentence definitions
+
+* **Stack** — automatic storage for each function call (locals, return addresses); super fast; limited; reclaimed when the function returns.
+* **Heap** — dynamic storage you request with `malloc` and release with `free`; flexible size; slower; you own the lifetime.
+* **Static / Globals** — variables that exist for the entire program (either file-scope globals or `static` variables inside functions).
+* **Mapped regions** — memory areas the OS maps into your process (shared libraries, memory‑mapped files, and sometimes large allocations under the hood).
+
+---
+
+## Tiny C anchor
+
+```c
+// globals.c (illustrative only)
+#include <stdlib.h>
+
+int g = 1;          // global → static storage (whole program lifetime)
+static int sg = 2;  // file-scope static → static storage
+
+int main(void) {
+    static int sl = 3;      // function-scope static → static storage
+    int local = 4;          // stack (lives until function returns)
+
+    int *p = malloc(sizeof *p); // heap (lives until you free it)
+    *p = 5;
+
+    const char *s = "hi";  // pointer on stack; the literal lives in a mapped, read-only region
+
+    free(p);
+    return 0;
+}
+```
+
+---
+
+## Rules of thumb
+
+* Prefer **stack** for small, short-lived data. It’s automatic and fast.
+* Use the **heap** for big or flexible-sized data that must outlive the current function. Always `free` what you `malloc`.
+* Reserve **static/globals** for truly shared, long‑lived state or constants. Don’t overuse them.
+* **Mapped regions** are mostly handled by the OS/runtime (shared libs). When you explicitly `mmap` a file, you treat it like an array in memory.
+
+---
+
