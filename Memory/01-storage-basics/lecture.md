@@ -37,45 +37,33 @@
 
 ## Visual map (conceptual address space)
 
-```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#ffffff','lineColor':'#94a3b8','fontSize':'16px','fontFamily':'Inter, ui-sans-serif','edgeLabelBackground':'#ffffff'}}}%%
-flowchart TD
-  high[High addresses]
-  low[Low addresses]
-  
-  subgraph S[Stack — function locals]
-    direction TB
-    Sinfo["• Fast, automatic<br/>• Limited size per thread<br/>• Grows downward (↓)"]
-  end
-  
-  subgraph M[Mapped regions — OS-provided]
-    direction TB
-    Minfo["• Shared libraries<br/>• Memory‑mapped files<br/>• Some large allocations"]
-  end
-  
-  subgraph H[Heap — malloc/free]
-    direction TB
-    Hinfo["• Flexible sizes<br/>• You manage lifetime<br/>• Grows upward (↑)"]
-  end
-  
-  subgraph G[Static / Globals — whole program]
-    direction TB
-    Ginfo["• Exist for entire run<br/>• Initialized before main()<br/>• Good for true constants/state"]
-  end
+![alt text](memory.png)
 
-  high --> S --> M --> H --> G --> low
+``` mermaid
+graph TB
+  %% vertical stack (top = higher addresses)
+  S[Stack (grows down)]
+  H[Dynamic Data (Heap) (grows up)]
+  SD[Static Data]
+  L[Literals]
+  I[Instructions]
 
-  classDef addr fill:#f3f4f6,stroke:#6b7280,color:#374151,stroke-dasharray: 5 5,stroke-width:1px;
-  classDef stack fill:#fef3c7,stroke:#b45309,color:#111827,stroke-width:1.5px;
-  classDef mapped fill:#cffafe,stroke:#0e7490,color:#111827,stroke-width:1.5px;
-  classDef heap fill:#dcfce7,stroke:#15803d,color:#111827,stroke-width:1.5px;
-  classDef static fill:#fee2e2,stroke:#b91c1c,color:#111827,stroke-width:1.5px;
+  %% order top→bottom
+  S --> H --> SD --> L --> I
 
-  class high,low addr;
-  class S,Sinfo stack;
-  class M,Minfo mapped;
-  class H,Hinfo heap;
-  class G,Ginfo static;
+  %% left-side permissions
+  LS["writable; not executable"] --- S
+  LH["writable; not executable"] --- H
+  LSD["writable; not executable"] --- SD
+  LL["read-only; not executable"] --- L
+  LI["read-only; executable"] --- I
+
+  %% right-side notes
+  RS["managed automatically (by compiler)"] --- S
+  RH["managed by programmer"] --- H
+  RSD["initialized when process starts"] --- SD
+  RL["initialized when process starts"] --- L
+  RI["initialized when process starts"] --- I
 ```
 
 > This is a **conceptual** layout; exact addresses change every run due to ASLR (address randomization). The relative roles remain the same.

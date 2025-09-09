@@ -37,46 +37,10 @@
 
 ## Визуальная схема (концептуальное адресное пространство)
 
-```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#ffffff','lineColor':'#94a3b8','fontSize':'16px','fontFamily':'Inter, ui-sans-serif','edgeLabelBackground':'#ffffff'}}}%%
-flowchart TD
-  high[Старшие адреса]
-  low[Младшие адреса]
-  
-  subgraph S[Стек — локальные переменные]
-    direction TB
-    Sinfo["• Быстрый, автоматический<br/>• Ограниченный размер на поток<br/>• Растёт вниз (↓)"]
-  end
-  
-  subgraph M[Отображённые области — ОС]
-    direction TB
-    Minfo["• Общие библиотеки<br/>• Файлы, отображённые в память<br/>• Крупные выделения памяти"]
-  end
-  
-  subgraph H[Куча — malloc/free]
-    direction TB
-    Hinfo["• Гибкий размер<br/>• Управление временем жизни<br/>• Растёт вверх (↑)"]
-  end
-  
-  subgraph G[Статические/Глобальные — вся программа]
-    direction TB
-    Ginfo["• Существуют всё время работы<br/>• Инициализируются до main()<br/>• Для констант/состояния"]
-  end
+![alt text](images/memory16kb.png)
 
-  high --> S --> M --> H --> G --> low
+![alt text](images/memory.png)
 
-  classDef addr fill:#f3f4f6,stroke:#6b7280,color:#374151,stroke-dasharray: 5 5,stroke-width:1px;
-  classDef stack fill:#fef3c7,stroke:#b45309,color:#111827,stroke-width:1.5px;
-  classDef mapped fill:#cffafe,stroke:#0e7490,color:#111827,stroke-width:1.5px;
-  classDef heap fill:#dcfce7,stroke:#15803d,color:#111827,stroke-width:1.5px;
-  classDef static fill:#fee2e2,stroke:#b91c1c,color:#111827,stroke-width:1.5px;
-
-  class high,low addr;
-  class S,Sinfo stack;
-  class M,Minfo mapped;
-  class H,Hinfo heap;
-  class G,Ginfo static;
-```
 
 > Это **концептуальная** схема; фактические адреса меняются при каждом запуске из-за ASLR (рандомизации адресного пространства). Относительные роли областей остаются неизменными.
 
