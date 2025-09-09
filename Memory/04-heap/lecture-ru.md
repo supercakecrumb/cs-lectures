@@ -31,7 +31,7 @@
 
 static int *g; // указывает на память в куче
 
-static void show(const char *who) {
+static void show(const char *who) {b z 
     int stack_local = 0; // в этом фрейме
     printf("%s: &stack_local=%p  g=%p -> %d
 ", who, (void*)&stack_local, (void*)g, *g);
