@@ -27,7 +27,4 @@ func main() {
 
 	next := makeCounter()
 	fmt.Println("closure:", next(), next(), next()) // 1 2 3
-
-	const version = "v1" // compile-time constant (read-only); here for contrast
-	_ = version
 }

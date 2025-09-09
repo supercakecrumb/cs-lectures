@@ -11,22 +11,6 @@
 * **Not the stack**: the stack is per‑call and short‑lived; variables disappear on return.
 * **Not statics/globals**: those live for the entire program and are created at startup.
 
----
-
-## Visual: where it sits
-
-```mermaid
-flowchart TB
-  HA[High addresses]
-  ST[Stack - grows down]
-  MR[Mapped regions]
-  HP[Heap - grows up]
-  SG[Static/Globals]
-  CD[Code]
-  LA[Low addresses]
-
-  HA --> ST --> MR --> HP --> SG --> CD --> LA
-```
 
 ---
 
@@ -115,8 +99,7 @@ int main(void) {
 
     int *q = malloc(sizeof *q);
     free(q);
-    // printf("%d
-", *q);        // ❌ use-after-free (commented out to run safely)
+    // printf("%d", *q);        // ❌ use-after-free (commented out to run safely)
 
     // free(q);                    // ❌ double free (don’t do this)
 
@@ -133,33 +116,6 @@ gcc -O0 -g -fsanitize=address,undefined -fno-omit-frame-pointer heap_mistakes.c 
 
 The sanitizer pinpoints the bad line (overflow / UAF / double‑free) so you can fix it.
 
----
-
-## Demo 4 — `realloc` may move the block
-
-```c
-// heap_realloc.c
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-int main(void) {
-    char *p = malloc(8);
-    strcpy(p, "hi");
-    printf("p=%p '%s'
-", (void*)p, p);
-
-    char *tmp = realloc(p, 4096); // may move
-    if (!tmp) { free(p); return 1; }
-    p = tmp;
-
-    printf("p(now)=%p '%s'
-", (void*)p, p);
-    free(p);
-}
-```
-
-**Pattern**: `tmp = realloc(p, new_size); if (tmp) p = tmp; else { /* p unchanged */ }`.
 
 ---
 

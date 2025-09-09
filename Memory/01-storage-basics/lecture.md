@@ -7,23 +7,6 @@
 * A **word** is the CPU's natural register size (often 32 or 64 bits). It is **not** the smallest addressable unit.  
 * Addresses count bytes; **types** decide how many bytes to read/write starting at that address.  
 
-* x86/x86‑64 and ARM/ARM64 in practice: **little‑endian**. Networking uses **big‑endian** ("network byte order").  
-
----
-
-### Alignment (just enough)
-
-* Compilers prefer storing a 4‑byte `int` at an address divisible by 4, an 8‑byte `long`/`double` at a multiple of 8.  
-* **x86** tolerates unaligned accesses (slower). Some architectures may fault or require special handling.  
-* Structures may include **padding** to meet alignment; this affects `sizeof` and memory layout.  
-
----
-
-### Signedness & ranges (two's complement)
-
-* Unsigned 8‑bit: 0…255 (0x00…0xFF). Signed 8‑bit: −128…127.  
-* Unsigned overflow wraps by definition; **signed overflow is undefined behavior** in C.  
-
 ---
 
 ### Units
@@ -32,6 +15,24 @@
 * 1 **KiB** = 1024 bytes  
 * 1 **MiB** = 1024 KiB  
 * Use KiB/MiB/GiB for precision; KB/MB/GB are often used loosely.  
+
+---
+
+### Data types
+
+| Type | Typical size | Key idea |
+|---|---:|---|
+| **Boolean** | 1 bit (stored in ≥1 byte) | Two values: true/false. |
+| **Byte** | 8 bits | Smallest addressable unit. |
+| **Integer (signed n-bit)** | 8/16/32/64 | Range ≈ −2^(n−1)…2^(n−1)−1. |
+| **Integer (unsigned n-bit)** | 8/16/32/64 | Range 0…2^n−1. |
+| **Machine-size int** | 32 or 64 bits | Matches platform word size. |
+| **Float32 / Float64** | 32 / 64 bits | IEEE-754; approximate real numbers. |
+| **Text (UTF-8 string)** | variable | Unicode in 1–4 bytes per code point. |
+| **Pointer / Reference** | 32 or 64 bits | Address/handle to data or object. |
+| **Array (fixed)** | N × element size | Contiguous, fixed length. |
+| **Dynamic array / Slice** | descriptor + data | Resizable; underlying storage may move. |
+| **Struct / Record** | sum of fields (+padding) | Grouped fields; padding for alignment. |
 
 ---
 
@@ -91,11 +92,9 @@ int main(void) {
 
 ## Summary
 
-This overview covers the fundamental concepts of memory organization in C programs, including:
+This overview covers the fundamental concepts of memory organization, including:
 - Basic storage units (bits, bytes, words)
 - Memory addressing and alignment
 - Signed/unsigned representations
 - The four main memory regions (stack, heap, static/globals, mapped regions)
 - Practical guidelines for memory usage
-
-Understanding these concepts is essential for writing efficient, reliable C programs and debugging memory-related issues.
