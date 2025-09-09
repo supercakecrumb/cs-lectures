@@ -36,7 +36,7 @@
 ---
 
 ## Visual map (conceptual address space)
-
+Let's imagine that we have only 16kb of memory:
 ![alt text](images/memory16kb.png)
 
 ![alt text](images/memory.png)
