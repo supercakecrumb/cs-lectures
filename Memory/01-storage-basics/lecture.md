@@ -37,34 +37,10 @@
 
 ## Visual map (conceptual address space)
 
-![alt text](memory.png)
+![alt text](images/memory16kb.png)
 
-``` mermaid
-graph TB
-  %% vertical stack (top = higher addresses)
-  S[Stack (grows down)]
-  H[Dynamic Data (Heap) (grows up)]
-  SD[Static Data]
-  L[Literals]
-  I[Instructions]
+![alt text](images/memory.png)
 
-  %% order top→bottom
-  S --> H --> SD --> L --> I
-
-  %% left-side permissions
-  LS["writable; not executable"] --- S
-  LH["writable; not executable"] --- H
-  LSD["writable; not executable"] --- SD
-  LL["read-only; not executable"] --- L
-  LI["read-only; executable"] --- I
-
-  %% right-side notes
-  RS["managed automatically (by compiler)"] --- S
-  RH["managed by programmer"] --- H
-  RSD["initialized when process starts"] --- SD
-  RL["initialized when process starts"] --- L
-  RI["initialized when process starts"] --- I
-```
 
 > This is a **conceptual** layout; exact addresses change every run due to ASLR (address randomization). The relative roles remain the same.
 
