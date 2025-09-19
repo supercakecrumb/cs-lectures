@@ -4,26 +4,6 @@
 
 ---
 
-## Visual: frames on the stack
-
-```mermaid
-graph TB
-  HA[High addresses]
-  LA[Low addresses]
-
-  subgraph Stack
-    direction BT
-    F2[f2() frame — locals, saved regs]
-    F1[f1() frame]
-    FM[main() frame]
-  end
-
-  HA --- Stack
-  Stack --- LA
-```
-
-> New calls push a new **frame**; returning from a function pops that frame.
-
 ---
 
 ## Demo A — Frames & addresses move downward
@@ -59,47 +39,8 @@ gcc -O0 -g -Wall -Wextra -fno-omit-frame-pointer stack_frames.c -o stack_frames
 
 You’ll usually see addresses **decrease** as the call depth increases (Linux/x86‑64). Values vary run‑to‑run due to ASLR.
 
----
 
-## Demo B — Peek at raw bytes on the stack (safe)
-
-```c
-// stack_bytes.c
-#include <stdio.h>
-#include <stdint.h>
-
-static void hex(const void *p, size_t n) {
-    const unsigned char *b = (const unsigned char*)p;
-    for (size_t i = 0; i < n; i++) {
-        printf("%02X%s", b[i], (i+1)%16?" ":"\n");
-    }
-    if (n % 16) puts("");
-}
-
-int main(void) {
-    unsigned char a[32];
-    unsigned char b[32];
-    for (int i = 0; i < 32; i++) a[i] = 0xA0 + i; // pattern A0..BF
-    for (int i = 0; i < 32; i++) b[i] = 0xB0 + i; // pattern B0..CF
-
-    printf("&a=%p  &b=%p\n", (void*)a, (void*)b);
-    puts("a bytes:"); hex(a, sizeof a);
-    puts("b bytes:"); hex(b, sizeof b);
-}
-```
-
-**Build & run**
-
-```bash
-gcc -O0 -g -Wall -Wextra stack_bytes.c -o stack_bytes
-./stack_bytes
-```
-
-Often `&a` will be **higher** than `&b` because `b` was allocated later and the stack grows **down**. The hex dump shows exactly what sits in memory.
-
----
-
-## Demo C — A classic lifetime bug (returning a stack address)
+## Demo B — A classic lifetime bug (returning a stack address)
 
 ```c
 // stack_bug.c
