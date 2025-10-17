@@ -1,288 +1,298 @@
-# Go Goroutines and Concurrency Course
+# Go Concurrency Course / Курс по конкурентности в Go
 
-A comprehensive course on Go concurrency patterns, goroutines, channels, and synchronization primitives.
+[English](#english) | [Русский](#русский)
 
-## 📁 Project Structure
+---
+
+## English
+
+### 📚 Course Overview
+
+This is a comprehensive Go concurrency course covering goroutines, channels, and concurrent programming patterns. The course includes practical examples, homework assignments, and automated testing.
+
+### 🏗️ Project Structure
 
 ```
-.
-├── demos/                  # Basic goroutine demonstrations
-│   ├── 01-goroutines.go           # Basic goroutine usage
-│   ├── 02-goroutines-anon.go      # Anonymous functions with goroutines
-│   └── 03-mutex.go                # Mutex for synchronization
-│
-├── channels/              # Channel examples and patterns
-│   ├── 01-basics.go              # Channel basics
-│   ├── 02-buffered.go            # Buffered channels
-│   ├── 03-directions.go          # Channel directions
-│   ├── 04-ownership.go           # Channel ownership pattern
-│   ├── 05-select.go              # Select statement
-│   ├── 06-for-select.go          # For-select pattern
-│   └── 07-range.go               # Range over channels
-│
-├── homework/              # Homework tasks and tests
-│   ├── tasks.go                  # Task implementations (blank)
-│   ├── tasks_test.go             # Tests and benchmarks
-│   └── errors.go                 # Common errors to fix
-│
-└── Makefile              # Build and test automation
+GoRoutines/
+├── README.md           # This file
+├── Makefile           # Build automation and testing
+├── go.mod             # Go module definition
+├── demos/             # Basic goroutine examples
+│   ├── 01-goroutines.go
+│   ├── 02-goroutines-anon.go
+│   └── 03-mutex.go
+├── channels/          # Channel examples and patterns
+│   ├── 01-basics.go
+│   ├── 02-buffered.go
+│   ├── 03-directions.go
+│   ├── 04-ownership.go
+│   ├── 05-select.go
+│   ├── 06-for-select.go
+│   ├── 07-range.go
+│   └── README.md
+└── homework/          # Assignments and tests
+    ├── task1_parallel_sum.go
+    ├── task2_http_fetch.go
+    ├── task3_pipeline.go
+    ├── task4_worker_pool.go
+    ├── task5_rate_limiter.go
+    ├── task6_fan_out_in.go
+    ├── task7_timeout.go
+    ├── task8_semaphore.go
+    ├── errors.go
+    ├── helpers.go
+    └── tasks_test.go
 ```
 
-## 🚀 Getting Started
+### 🚀 Getting Started
 
-### Prerequisites
-- Go 1.21 or higher
-- Make (optional, for using Makefile commands)
+1. **Prerequisites**: Go 1.19+ installed
+2. **Clone and navigate**: `cd GoRoutines`
+3. **Run examples**: `make run-demos` or `make run-channels`
+4. **Test homework**: `make test`
 
-### Running Examples
+### 🛠️ Makefile Commands
 
-#### Demos
-```bash
-# Run all demos
-make run-demos
+The project uses a [Makefile](https://www.gnu.org/software/make/manual/make.html) for automation. Make is a build automation tool that runs commands based on targets defined in the Makefile.
 
-# Or run individually
-go run demos/01-goroutines.go
-go run demos/02-goroutines-anon.go
-go run demos/03-mutex.go
+#### 📋 Available Commands
+
+| Command | Description |
+|---------|-------------|
+| `make help` | Show all available commands |
+| `make test` | Run all tests (expect failures for unimplemented functions) |
+| `make test-verbose` | Run tests with detailed output |
+| `make test-short` | Run tests in short mode |
+| `make race` | Run tests with race condition detection |
+| `make bench` | Run performance benchmarks |
+| `make coverage` | Generate test coverage report (creates `coverage.html`) |
+| `make clean` | Clean test cache and coverage files |
+| `make run-demos` | Execute all demo files |
+| `make run-channels` | Execute all channel examples |
+
+#### 🎯 Individual Task Testing
+
+| Command | Description |
+|---------|-------------|
+| `make test-task1` | Test only Task 1 (ParallelSum) |
+| `make test-task2` | Test only Task 2 (FetchURLs) |
+| `make test-task3` | Test only Task 3 (ProcessPipeline) |
+| `make test-task4` | Test only Task 4 (WorkerPool) |
+
+#### ⚡ Performance Testing
+
+| Command | Description |
+|---------|-------------|
+| `make bench-task1` | Benchmark Task 1 (3 second runs) |
+| `make bench-task4` | Benchmark Task 4 (3 second runs) |
+
+### 📖 How Makefile Works
+
+A Makefile contains **targets** (commands) and **recipes** (shell commands to execute). When you run `make target`, it executes the associated commands.
+
+**Basic syntax:**
+```makefile
+target: dependencies
+	command1
+	command2
 ```
 
-#### Channel Examples
-```bash
-# Run all channel examples
-make run-channels
+**Key features used in this project:**
+- `.PHONY`: Declares targets that don't create files
+- `@echo`: Prints messages (@ suppresses command echo)
+- `&&`: Chains commands (stops on first failure)
+- Variables: `./homework` specifies the test directory
 
-# Or run individually
-go run channels/01-basics.go
-go run channels/05-select.go
+**Example from our Makefile:**
+```makefile
+test:
+	@echo "Running tests..."
+	go test ./homework -v
 ```
 
-## 📚 Course Content
+Learn more: [GNU Make Manual](https://www.gnu.org/software/make/manual/make.html)
 
-### 1. Demos (`demos/`)
+### 📝 Homework Tasks
 
-#### [`01-goroutines.go`](demos/01-goroutines.go:1)
-- Basic goroutine creation and execution
-- Understanding concurrent execution
+The course includes 8 practical assignments:
 
-#### [`02-goroutines-anon.go`](demos/02-goroutines-anon.go:1)
-- Anonymous functions with goroutines
-- Good vs bad closure practices
-- Loop variable capture issues
+1. **Task 1**: Parallel Sum - Calculate sum using multiple goroutines
+2. **Task 2**: HTTP Fetcher - Concurrent HTTP requests with timeouts
+3. **Task 3**: Pipeline - 3-stage processing pipeline (generate → square → filter)
+4. **Task 4**: Worker Pool - Fixed number of workers processing jobs
+5. **Task 5**: Rate Limiter - Process items with rate limiting
+6. **Task 6**: Fan-Out/Fan-In - Distribute work and collect results
+7. **Task 7**: Timeout Pattern - Processing with timeout constraints
+8. **Task 8**: Semaphore - Limit concurrent operations
 
-#### [`03-mutex.go`](demos/03-mutex.go:1)
-- Race conditions
-- Mutex for synchronization
-- Safe concurrent access patterns
+### ✅ Testing Strategy
 
-### 2. Channels (`channels/`)
+- **Expected Behavior**: Tests will fail initially (functions return 0/nil)
+- **Fast Execution**: Tests complete in ~0.2 seconds with timeout protection
+- **Comprehensive Coverage**: Edge cases, boundary conditions, error scenarios
+- **Race Detection**: Use `make race` to detect concurrency issues
+- **Benchmarking**: Performance testing for optimization
 
-#### [`01-basics.go`](channels/01-basics.go:1)
-- Creating and using channels
-- Sending and receiving
-- Closing channels
-- Broadcast signal pattern
+### 🔧 Development Workflow
 
-#### [`02-buffered.go`](channels/02-buffered.go:1)
-- Buffered vs unbuffered channels
-- Deadlock examples
-- Worker pool pattern
-- Rate limiting
-- Producer/Consumer pattern
+1. **Study examples**: `make run-demos && make run-channels`
+2. **Implement functions**: Edit files in `homework/`
+3. **Test your work**: `make test-task1` (replace with task number)
+4. **Check for races**: `make race`
+5. **Benchmark performance**: `make bench-task1`
+6. **Generate coverage**: `make coverage`
 
-#### [`03-directions.go`](channels/03-directions.go:1)
-- Send-only channels (`chan<-`)
-- Receive-only channels (`<-chan`)
-- Pipeline pattern
-- Type safety benefits
+---
 
-#### [`04-ownership.go`](channels/04-ownership.go:1)
-- Channel ownership pattern
-- Encapsulation with channels
-- Safe channel lifecycle management
+## Русский
 
-#### [`05-select.go`](channels/05-select.go:1)
-- Select statement basics
-- Non-blocking operations
-- Timeout patterns
-- Cancellation with done channels
+### 📚 Обзор курса
 
-#### [`06-for-select.go`](channels/06-for-select.go:1)
-- Combining for and select
-- Multiple channel handling
-- Proper exit conditions
+Это комплексный курс по конкурентности в Go, охватывающий горутины, каналы и паттерны конкурентного программирования. Курс включает практические примеры, домашние задания и автоматизированное тестирование.
 
-#### [`07-range.go`](channels/07-range.go:1)
-- Ranging over channels
-- Proper channel closing
-- Early termination patterns
+### 🏗️ Структура проекта
 
-## 🎯 Homework Tasks
-
-### Task 1: Parallel Computing
-Implement `ParallelSum` and `SquareSum` functions that process data concurrently.
-
-### Task 2: HTTP Concurrency
-Implement `FetchURLs` to fetch multiple URLs concurrently with timeout support.
-
-### Task 3: Pipeline Pattern
-Create a 3-stage pipeline: generate → square → filter even numbers.
-
-### Task 4: Worker Pool
-Implement a worker pool pattern for concurrent job processing.
-
-### Task 5: Rate Limiter
-Build a rate-limited processor that respects throughput limits.
-
-### Task 6: Fan-Out/Fan-In
-Distribute work across workers and collect results.
-
-### Task 7: Timeout Pattern
-Process data with timeout constraints.
-
-### Task 8: Semaphore Pattern
-Limit concurrent operations using semaphore pattern.
-
-## 🧪 Testing
-
-### Run All Tests
-```bash
-make test
-# or
-go test ./homework -v
+```
+GoRoutines/
+├── README.md           # Этот файл
+├── Makefile           # Автоматизация сборки и тестирования
+├── go.mod             # Определение Go модуля
+├── demos/             # Базовые примеры горутин
+│   ├── 01-goroutines.go
+│   ├── 02-goroutines-anon.go
+│   └── 03-mutex.go
+├── channels/          # Примеры каналов и паттернов
+│   ├── 01-basics.go
+│   ├── 02-buffered.go
+│   ├── 03-directions.go
+│   ├── 04-ownership.go
+│   ├── 05-select.go
+│   ├── 06-for-select.go
+│   ├── 07-range.go
+│   └── README.md
+└── homework/          # Задания и тесты
+    ├── task1_parallel_sum.go
+    ├── task2_http_fetch.go
+    ├── task3_pipeline.go
+    ├── task4_worker_pool.go
+    ├── task5_rate_limiter.go
+    ├── task6_fan_out_in.go
+    ├── task7_timeout.go
+    ├── task8_semaphore.go
+    ├── errors.go
+    ├── helpers.go
+    └── tasks_test.go
 ```
 
-### Run Specific Tests
-```bash
-make test-task1    # Test ParallelSum
-make test-task2    # Test FetchURLs
-make test-task3    # Test ProcessPipeline
-make test-task4    # Test WorkerPool
+### 🚀 Начало работы
+
+1. **Требования**: Go 1.19+ установлен
+2. **Клонирование и переход**: `cd GoRoutines`
+3. **Запуск примеров**: `make run-demos` или `make run-channels`
+4. **Тестирование заданий**: `make test`
+
+### 🛠️ Команды Makefile
+
+Проект использует [Makefile](https://www.gnu.org/software/make/manual/make.html) для автоматизации. Make — это инструмент автоматизации сборки, который выполняет команды на основе целей, определенных в Makefile.
+
+#### 📋 Доступные команды
+
+| Команда | Описание |
+|---------|----------|
+| `make help` | Показать все доступные команды |
+| `make test` | Запустить все тесты (ожидаются ошибки для нереализованных функций) |
+| `make test-verbose` | Запустить тесты с подробным выводом |
+| `make test-short` | Запустить тесты в кратком режиме |
+| `make race` | Запустить тесты с обнаружением состояний гонки |
+| `make bench` | Запустить бенчмарки производительности |
+| `make coverage` | Сгенерировать отчет о покрытии тестами (создает `coverage.html`) |
+| `make clean` | Очистить кеш тестов и файлы покрытия |
+| `make run-demos` | Выполнить все демо-файлы |
+| `make run-channels` | Выполнить все примеры каналов |
+
+#### 🎯 Тестирование отдельных заданий
+
+| Команда | Описание |
+|---------|----------|
+| `make test-task1` | Тестировать только Задание 1 (ParallelSum) |
+| `make test-task2` | Тестировать только Задание 2 (FetchURLs) |
+| `make test-task3` | Тестировать только Задание 3 (ProcessPipeline) |
+| `make test-task4` | Тестировать только Задание 4 (WorkerPool) |
+
+#### ⚡ Тестирование производительности
+
+| Команда | Описание |
+|---------|----------|
+| `make bench-task1` | Бенчмарк Задания 1 (3-секундные прогоны) |
+| `make bench-task4` | Бенчмарк Задания 4 (3-секундные прогоны) |
+
+### 📖 Как работает Makefile
+
+Makefile содержит **цели** (команды) и **рецепты** (shell-команды для выполнения). Когда вы запускаете `make target`, выполняются связанные команды.
+
+**Базовый синтаксис:**
+```makefile
+target: dependencies
+	command1
+	command2
 ```
 
-### Run with Race Detector
-```bash
-make race
-# or
-go test ./homework -race
+**Ключевые возможности, используемые в проекте:**
+- `.PHONY`: Объявляет цели, которые не создают файлы
+- `@echo`: Выводит сообщения (@ подавляет вывод команды)
+- `&&`: Связывает команды (останавливается при первой ошибке)
+- Переменные: `./homework` указывает директорию для тестов
+
+**Пример из нашего Makefile:**
+```makefile
+test:
+	@echo "Running tests..."
+	go test ./homework -v
 ```
 
-### Generate Coverage Report
-```bash
-make coverage
-# Opens coverage.html in browser
-```
+Подробнее: [Руководство GNU Make](https://www.gnu.org/software/make/manual/make.html)
 
-## 📊 Benchmarks
+### 📝 Домашние задания
 
-### Run All Benchmarks
-```bash
-make bench
-# or
-go test ./homework -bench=. -benchmem
-```
+Курс включает 8 практических заданий:
 
-### Run Specific Benchmarks
-```bash
-make bench-task1   # Benchmark ParallelSum
-make bench-task4   # Benchmark WorkerPool
-```
+1. **Задание 1**: Параллельная сумма - Вычисление суммы с использованием нескольких горутин
+2. **Задание 2**: HTTP-загрузчик - Конкурентные HTTP-запросы с таймаутами
+3. **Задание 3**: Конвейер - 3-этапный конвейер обработки (генерация → возведение в квадрат → фильтрация)
+4. **Задание 4**: Пул воркеров - Фиксированное количество воркеров, обрабатывающих задачи
+5. **Задание 5**: Ограничитель скорости - Обработка элементов с ограничением скорости
+6. **Задание 6**: Fan-Out/Fan-In - Распределение работы и сбор результатов
+7. **Задание 7**: Паттерн таймаута - Обработка с ограничениями по времени
+8. **Задание 8**: Семафор - Ограничение конкурентных операций
 
-### Compare Worker Counts
-```bash
-go test ./homework -bench=BenchmarkParallelSum -benchmem
-```
+### ✅ Стратегия тестирования
 
-Expected output shows performance with different worker counts:
-```
-BenchmarkParallelSum/1worker-8     1000    1234567 ns/op
-BenchmarkParallelSum/2workers-8    2000     654321 ns/op
-BenchmarkParallelSum/4workers-8    3000     345678 ns/op
-```
+- **Ожидаемое поведение**: Тесты изначально будут падать (функции возвращают 0/nil)
+- **Быстрое выполнение**: Тесты завершаются за ~0.2 секунды с защитой от таймаутов
+- **Комплексное покрытие**: Граничные случаи, пограничные условия, сценарии ошибок
+- **Обнаружение гонок**: Используйте `make race` для обнаружения проблем конкурентности
+- **Бенчмаркинг**: Тестирование производительности для оптимизации
 
-## 🐛 Common Errors (`homework/errors.go`)
+### 🔧 Рабочий процесс разработки
 
-The `errors.go` file contains 7 common concurrency bugs for students to fix:
+1. **Изучите примеры**: `make run-demos && make run-channels`
+2. **Реализуйте функции**: Редактируйте файлы в `homework/`
+3. **Тестируйте работу**: `make test-task1` (замените на номер задания)
+4. **Проверьте гонки**: `make race`
+5. **Бенчмарк производительности**: `make bench-task1`
+6. **Сгенерируйте покрытие**: `make coverage`
 
-1. **Easy**: Missing `WaitGroup.Wait()`
-2. **Easy-Medium**: Loop variable capture bug
-3. **Medium**: Channel not closed (deadlock)
-4. **Medium-Hard**: Race condition on shared variable
-5. **Hard**: Goroutine leak with blocked channel
-6. **Hard**: Select without default in tight loop
-7. **Hard**: Deadlock with mutual channel dependency
+---
 
-### How to Fix Errors
+### 📚 Additional Resources / Дополнительные ресурсы
 
-1. Read the code and comments
-2. Identify the bug
-3. Fix the issue
-4. Test your fix
+- [Go Concurrency Patterns](https://go.dev/blog/pipelines)
+- [Effective Go - Concurrency](https://go.dev/doc/effective_go#concurrency)
+- [Go Memory Model](https://go.dev/ref/mem)
+- [GNU Make Manual](https://www.gnu.org/software/make/manual/make.html)
 
-## 📖 Key Concepts
+### 🤝 Contributing / Участие в разработке
 
-### Goroutines
-- Lightweight threads managed by Go runtime
-- Use `go` keyword to launch
-- Always synchronize completion
+Feel free to submit issues and pull requests to improve the course materials.
 
-### Channels
-- Communication between goroutines
-- Buffered vs unbuffered
-- Always close when done sending
-- Use directional channels for safety
-
-### Synchronization
-- `sync.WaitGroup` - Wait for goroutines to complete
-- `sync.Mutex` - Protect shared data
-- Channels - Communicate and synchronize
-
-### Patterns
-- **Worker Pool**: Fixed number of workers processing jobs
-- **Pipeline**: Chain of processing stages
-- **Fan-Out/Fan-In**: Distribute work, collect results
-- **Timeout**: Limit operation duration
-- **Rate Limiting**: Control throughput
-- **Semaphore**: Limit concurrent operations
-
-## 🎓 Learning Path
-
-1. Start with `demos/` to understand basics
-2. Study `channels/` examples in order
-3. Implement homework tasks in `homework/tasks.go`
-4. Run tests to verify implementations
-5. Fix bugs in `homework/errors.go`
-6. Run benchmarks to understand performance
-
-## 🔧 Makefile Commands
-
-```bash
-make help          # Show all available commands
-make test          # Run all tests
-make test-verbose  # Run tests with verbose output
-make bench         # Run all benchmarks
-make race          # Run tests with race detector
-make coverage      # Generate coverage report
-make clean         # Clean test cache
-make run-demos     # Run all demo files
-make run-channels  # Run all channel examples
-```
-
-## 📝 Tips
-
-1. **Always use WaitGroup** when launching goroutines
-2. **Close channels** when done sending
-3. **Pass loop variables** as parameters to goroutines
-4. **Use mutex** for shared data access
-5. **Test with race detector** (`-race` flag)
-6. **Use buffered channels** to prevent blocking
-7. **Handle timeouts** for long-running operations
-8. **Use select** for multiple channel operations
-
-## 🤝 Contributing
-
-Feel free to submit issues and enhancement requests!
-
-## 📄 License
-
-This course material is provided for educational purposes.
+Не стесняйтесь отправлять issues и pull requests для улучшения материалов курса.

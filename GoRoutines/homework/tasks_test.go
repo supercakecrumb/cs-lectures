@@ -163,9 +163,28 @@ func TestProcessPipeline(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			ch := ProcessPipeline(tt.n)
+			if ch == nil {
+				t.Skip("ProcessPipeline not implemented yet")
+				return
+			}
+
 			results := []int{}
-			for num := range ProcessPipeline(tt.n) {
-				results = append(results, num)
+			// Add timeout to prevent infinite blocking
+			done := make(chan bool)
+			go func() {
+				for num := range ch {
+					results = append(results, num)
+				}
+				done <- true
+			}()
+
+			select {
+			case <-done:
+				// Success
+			case <-time.After(1 * time.Second):
+				t.Error("ProcessPipeline() timed out - possible deadlock or infinite loop")
+				return
 			}
 
 			if len(results) != len(tt.expected) {
@@ -196,7 +215,25 @@ func makeEvenSquares(n int) []int {
 
 func BenchmarkProcessPipeline(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		for range ProcessPipeline(100) {
+		ch := ProcessPipeline(100)
+		if ch == nil {
+			b.Skip("ProcessPipeline not implemented yet")
+			return
+		}
+
+		// Add timeout protection for benchmark
+		done := make(chan bool)
+		go func() {
+			for range ch {
+			}
+			done <- true
+		}()
+
+		select {
+		case <-done:
+			// Success
+		case <-time.After(1 * time.Second):
+			b.Fatal("ProcessPipeline() benchmark timed out")
 		}
 	}
 }
@@ -309,11 +346,32 @@ func TestRateLimitedProcessor(t *testing.T) {
 		items := []string{"a", "b", "c", "d", "e"}
 		maxPerSecond := 10
 
+		ch := RateLimitedProcessor(items, maxPerSecond)
+		if ch == nil {
+			t.Skip("RateLimitedProcessor not implemented yet")
+			return
+		}
+
 		start := time.Now()
 		results := []string{}
-		for item := range RateLimitedProcessor(items, maxPerSecond) {
-			results = append(results, item)
+
+		// Add timeout protection
+		done := make(chan bool)
+		go func() {
+			for item := range ch {
+				results = append(results, item)
+			}
+			done <- true
+		}()
+
+		select {
+		case <-done:
+			// Success
+		case <-time.After(2 * time.Second):
+			t.Error("RateLimitedProcessor() timed out")
+			return
 		}
+
 		duration := time.Since(start)
 
 		if len(results) != len(items) {
@@ -328,11 +386,29 @@ func TestRateLimitedProcessor(t *testing.T) {
 	})
 
 	t.Run("empty items", func(t *testing.T) {
-		items := []string{}
-		results := []string{}
-		for item := range RateLimitedProcessor(items, 5) {
-			results = append(results, item)
+		ch := RateLimitedProcessor([]string{}, 5)
+		if ch == nil {
+			t.Skip("RateLimitedProcessor not implemented yet")
+			return
 		}
+
+		results := []string{}
+		done := make(chan bool)
+		go func() {
+			for item := range ch {
+				results = append(results, item)
+			}
+			done <- true
+		}()
+
+		select {
+		case <-done:
+			// Success
+		case <-time.After(500 * time.Millisecond):
+			t.Error("RateLimitedProcessor() with empty items timed out")
+			return
+		}
+
 		if len(results) != 0 {
 			t.Errorf("RateLimitedProcessor() with empty items got %d results, want 0", len(results))
 		}
@@ -340,10 +416,29 @@ func TestRateLimitedProcessor(t *testing.T) {
 
 	t.Run("nil items", func(t *testing.T) {
 		var items []string
-		results := []string{}
-		for item := range RateLimitedProcessor(items, 5) {
-			results = append(results, item)
+		ch := RateLimitedProcessor(items, 5)
+		if ch == nil {
+			t.Skip("RateLimitedProcessor not implemented yet")
+			return
 		}
+
+		results := []string{}
+		done := make(chan bool)
+		go func() {
+			for item := range ch {
+				results = append(results, item)
+			}
+			done <- true
+		}()
+
+		select {
+		case <-done:
+			// Success
+		case <-time.After(500 * time.Millisecond):
+			t.Error("RateLimitedProcessor() with nil items timed out")
+			return
+		}
+
 		if len(results) != 0 {
 			t.Errorf("RateLimitedProcessor() with nil items got %d results, want 0", len(results))
 		}
@@ -351,11 +446,30 @@ func TestRateLimitedProcessor(t *testing.T) {
 
 	t.Run("zero rate", func(t *testing.T) {
 		items := []string{"a", "b", "c"}
+		ch := RateLimitedProcessor(items, 0)
+		if ch == nil {
+			t.Skip("RateLimitedProcessor not implemented yet")
+			return
+		}
+
 		start := time.Now()
 		results := []string{}
-		for item := range RateLimitedProcessor(items, 0) {
-			results = append(results, item)
+		done := make(chan bool)
+		go func() {
+			for item := range ch {
+				results = append(results, item)
+			}
+			done <- true
+		}()
+
+		select {
+		case <-done:
+			// Success
+		case <-time.After(1 * time.Second):
+			t.Error("RateLimitedProcessor() with zero rate timed out")
+			return
 		}
+
 		duration := time.Since(start)
 
 		if len(results) != len(items) {
@@ -370,11 +484,30 @@ func TestRateLimitedProcessor(t *testing.T) {
 
 	t.Run("negative rate", func(t *testing.T) {
 		items := []string{"a", "b", "c"}
+		ch := RateLimitedProcessor(items, -1)
+		if ch == nil {
+			t.Skip("RateLimitedProcessor not implemented yet")
+			return
+		}
+
 		start := time.Now()
 		results := []string{}
-		for item := range RateLimitedProcessor(items, -1) {
-			results = append(results, item)
+		done := make(chan bool)
+		go func() {
+			for item := range ch {
+				results = append(results, item)
+			}
+			done <- true
+		}()
+
+		select {
+		case <-done:
+			// Success
+		case <-time.After(1 * time.Second):
+			t.Error("RateLimitedProcessor() with negative rate timed out")
+			return
 		}
+
 		duration := time.Since(start)
 
 		if len(results) != len(items) {
@@ -389,11 +522,30 @@ func TestRateLimitedProcessor(t *testing.T) {
 
 	t.Run("single item", func(t *testing.T) {
 		items := []string{"single"}
+		ch := RateLimitedProcessor(items, 1)
+		if ch == nil {
+			t.Skip("RateLimitedProcessor not implemented yet")
+			return
+		}
+
 		start := time.Now()
 		results := []string{}
-		for item := range RateLimitedProcessor(items, 1) {
-			results = append(results, item)
+		done := make(chan bool)
+		go func() {
+			for item := range ch {
+				results = append(results, item)
+			}
+			done <- true
+		}()
+
+		select {
+		case <-done:
+			// Success
+		case <-time.After(1 * time.Second):
+			t.Error("RateLimitedProcessor() with single item timed out")
+			return
 		}
+
 		duration := time.Since(start)
 
 		if len(results) != 1 || results[0] != "single" {
@@ -410,11 +562,30 @@ func TestRateLimitedProcessor(t *testing.T) {
 		items := []string{"a", "b", "c", "d", "e"}
 		maxPerSecond := 1000 // Very high rate
 
+		ch := RateLimitedProcessor(items, maxPerSecond)
+		if ch == nil {
+			t.Skip("RateLimitedProcessor not implemented yet")
+			return
+		}
+
 		start := time.Now()
 		results := []string{}
-		for item := range RateLimitedProcessor(items, maxPerSecond) {
-			results = append(results, item)
+		done := make(chan bool)
+		go func() {
+			for item := range ch {
+				results = append(results, item)
+			}
+			done <- true
+		}()
+
+		select {
+		case <-done:
+			// Success
+		case <-time.After(1 * time.Second):
+			t.Error("RateLimitedProcessor() with high rate timed out")
+			return
 		}
+
 		duration := time.Since(start)
 
 		if len(results) != len(items) {

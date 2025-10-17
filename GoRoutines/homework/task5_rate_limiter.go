@@ -22,5 +22,9 @@ func RateLimitedProcessor(items []string, maxPerSecond int) <-chan string {
 	// 5. Send processed items to output channel
 	// 6. Close output channel and stop ticker when done
 	// 7. Return output channel
-	return nil
+
+	// Return closed channel to prevent hanging in tests
+	ch := make(chan string)
+	close(ch)
+	return ch
 }
