@@ -1,396 +1,288 @@
-# Go Concurrency Lesson
+# Go Goroutines and Concurrency Course
 
-A comprehensive, hands-on lesson on Go concurrency covering goroutines, channels, and synchronization primitives. This repository contains 12 progressive demos, detailed explanations, presentation slides, and practical homework assignments.
+A comprehensive course on Go concurrency patterns, goroutines, channels, and synchronization primitives.
 
-## 📚 What You'll Learn
-
-- Why concurrency matters and when to use it
-- Creating and managing goroutines safely
-- Synchronization primitives (WaitGroup, Mutex, Cond)
-- Channel-based communication patterns
-- Worker pools and pipelines
-- Race condition detection and prevention
-- Real-world concurrency patterns
-
-## 🎯 Prerequisites
-
-- Basic Go knowledge (syntax, functions, structs)
-- Go 1.21+ installed
-- Familiarity with command line
-
-## 📖 Repository Structure
+## 📁 Project Structure
 
 ```
 .
-├── README.md                    # This file
-├── LESSON_PLAN.md              # Detailed lesson architecture
-├── teacher-guide.md            # Teaching instructions and timing
-├── slides.md                   # Presentation slides with diagrams
-├── go.mod                      # Go module file
+├── demos/                  # Basic goroutine demonstrations
+│   ├── 01-goroutines.go           # Basic goroutine usage
+│   ├── 02-goroutines-anon.go      # Anonymous functions with goroutines
+│   └── 03-mutex.go                # Mutex for synchronization
 │
-├── 01-motivation/              # Part 1: Why concurrency?
-│   ├── README.md
-│   ├── demo01-sequential.go    # Sequential delays (~3s)
-│   └── demo02-concurrent.go    # Concurrent execution (~1s)
+├── channels/              # Channel examples and patterns
+│   ├── 01-basics.go              # Channel basics
+│   ├── 02-buffered.go            # Buffered channels
+│   ├── 03-directions.go          # Channel directions
+│   ├── 04-ownership.go           # Channel ownership pattern
+│   ├── 05-select.go              # Select statement
+│   ├── 06-for-select.go          # For-select pattern
+│   └── 07-range.go               # Range over channels
 │
-├── 02-goroutines/              # Part 2: Goroutine basics
-│   ├── README.md
-│   ├── demo03-lifecycle.go     # Goroutine lifecycle
-│   └── demo04-closure-trap.go  # Loop variable capture bug
+├── homework/              # Homework tasks and tests
+│   ├── tasks.go                  # Task implementations (blank)
+│   ├── tasks_test.go             # Tests and benchmarks
+│   └── errors.go                 # Common errors to fix
 │
-├── 03-synchronization/         # Part 3: Sync primitives
-│   ├── README.md
-│   ├── demo05-waitgroup.go     # WaitGroup patterns
-│   ├── demo06-data-race.go     # Race condition example
-│   ├── demo07-mutex.go         # Mutex solution
-│   └── demo08-cond.go          # Condition variables
-│
-├── 04-channels/                # Part 4: Channels
-│   ├── README.md
-│   ├── demo09-unbuffered.go    # Unbuffered channels
-│   ├── demo10-buffered.go      # Buffered channels
-│   ├── demo11-closing.go       # Closing and range
-│   └── demo12-worker-pool.go   # Worker pool pattern
-│
-└── homework/                   # Take-home assignments
-    └── README.md               # 3 practical assignments
+└── Makefile              # Build and test automation
 ```
 
-## 🚀 Quick Start
+## 🚀 Getting Started
 
-### Clone and Setup
+### Prerequisites
+- Go 1.21 or higher
+- Make (optional, for using Makefile commands)
+
+### Running Examples
+
+#### Demos
 ```bash
-git clone <repository-url>
-cd go-concurrency-lesson
+# Run all demos
+make run-demos
+
+# Or run individually
+go run demos/01-goroutines.go
+go run demos/02-goroutines-anon.go
+go run demos/03-mutex.go
 ```
 
-### Run Individual Demos
+#### Channel Examples
 ```bash
-# Part 1: Motivation
-cd 01-motivation
-go run demo01-sequential.go
-go run demo02-concurrent.go
+# Run all channel examples
+make run-channels
 
-# Part 2: Goroutines
-cd ../02-goroutines
-go run demo03-lifecycle.go
-go run demo04-closure-trap.go
+# Or run individually
+go run channels/01-basics.go
+go run channels/05-select.go
+```
 
-# Part 3: Synchronization
-cd ../03-synchronization
-go run demo05-waitgroup.go
-go run demo06-data-race.go
-go run -race demo06-data-race.go  # With race detector!
-go run demo07-mutex.go
-go run demo08-cond.go
+## 📚 Course Content
 
-# Part 4: Channels
-cd ../04-channels
-go run demo09-unbuffered.go
-go run demo10-buffered.go
-go run demo11-closing.go
-go run demo12-worker-pool.go
+### 1. Demos (`demos/`)
+
+#### [`01-goroutines.go`](demos/01-goroutines.go:1)
+- Basic goroutine creation and execution
+- Understanding concurrent execution
+
+#### [`02-goroutines-anon.go`](demos/02-goroutines-anon.go:1)
+- Anonymous functions with goroutines
+- Good vs bad closure practices
+- Loop variable capture issues
+
+#### [`03-mutex.go`](demos/03-mutex.go:1)
+- Race conditions
+- Mutex for synchronization
+- Safe concurrent access patterns
+
+### 2. Channels (`channels/`)
+
+#### [`01-basics.go`](channels/01-basics.go:1)
+- Creating and using channels
+- Sending and receiving
+- Closing channels
+- Broadcast signal pattern
+
+#### [`02-buffered.go`](channels/02-buffered.go:1)
+- Buffered vs unbuffered channels
+- Deadlock examples
+- Worker pool pattern
+- Rate limiting
+- Producer/Consumer pattern
+
+#### [`03-directions.go`](channels/03-directions.go:1)
+- Send-only channels (`chan<-`)
+- Receive-only channels (`<-chan`)
+- Pipeline pattern
+- Type safety benefits
+
+#### [`04-ownership.go`](channels/04-ownership.go:1)
+- Channel ownership pattern
+- Encapsulation with channels
+- Safe channel lifecycle management
+
+#### [`05-select.go`](channels/05-select.go:1)
+- Select statement basics
+- Non-blocking operations
+- Timeout patterns
+- Cancellation with done channels
+
+#### [`06-for-select.go`](channels/06-for-select.go:1)
+- Combining for and select
+- Multiple channel handling
+- Proper exit conditions
+
+#### [`07-range.go`](channels/07-range.go:1)
+- Ranging over channels
+- Proper channel closing
+- Early termination patterns
+
+## 🎯 Homework Tasks
+
+### Task 1: Parallel Computing
+Implement `ParallelSum` and `SquareSum` functions that process data concurrently.
+
+### Task 2: HTTP Concurrency
+Implement `FetchURLs` to fetch multiple URLs concurrently with timeout support.
+
+### Task 3: Pipeline Pattern
+Create a 3-stage pipeline: generate → square → filter even numbers.
+
+### Task 4: Worker Pool
+Implement a worker pool pattern for concurrent job processing.
+
+### Task 5: Rate Limiter
+Build a rate-limited processor that respects throughput limits.
+
+### Task 6: Fan-Out/Fan-In
+Distribute work across workers and collect results.
+
+### Task 7: Timeout Pattern
+Process data with timeout constraints.
+
+### Task 8: Semaphore Pattern
+Limit concurrent operations using semaphore pattern.
+
+## 🧪 Testing
+
+### Run All Tests
+```bash
+make test
+# or
+go test ./homework -v
+```
+
+### Run Specific Tests
+```bash
+make test-task1    # Test ParallelSum
+make test-task2    # Test FetchURLs
+make test-task3    # Test ProcessPipeline
+make test-task4    # Test WorkerPool
 ```
 
 ### Run with Race Detector
-**Always use the race detector during development:**
 ```bash
-go run -race demo06-data-race.go
-go test -race ./...
+make race
+# or
+go test ./homework -race
 ```
 
-## 📝 Lesson Flow
+### Generate Coverage Report
+```bash
+make coverage
+# Opens coverage.html in browser
+```
 
-### Part 1: Motivation (15 minutes)
-**Goal:** See the performance benefit of concurrency
+## 📊 Benchmarks
 
-- **Demo 1:** Sequential delays waste time (~3 seconds)
-- **Demo 2:** Concurrent execution is faster (~1 second)
-- **Key Insight:** Goroutines eliminate waiting time
+### Run All Benchmarks
+```bash
+make bench
+# or
+go test ./homework -bench=. -benchmem
+```
 
-[→ Go to Part 1](01-motivation/)
+### Run Specific Benchmarks
+```bash
+make bench-task1   # Benchmark ParallelSum
+make bench-task4   # Benchmark WorkerPool
+```
 
----
+### Compare Worker Counts
+```bash
+go test ./homework -bench=BenchmarkParallelSum -benchmem
+```
 
-### Part 2: Goroutines (15 minutes)
-**Goal:** Understand goroutine lifecycle and common pitfalls
+Expected output shows performance with different worker counts:
+```
+BenchmarkParallelSum/1worker-8     1000    1234567 ns/op
+BenchmarkParallelSum/2workers-8    2000     654321 ns/op
+BenchmarkParallelSum/4workers-8    3000     345678 ns/op
+```
 
-- **Demo 3:** Main doesn't wait for goroutines by default
-- **Demo 4:** Loop variable capture bug (and fix)
-- **Key Insight:** Always pass loop variables as parameters
+## 🐛 Common Errors (`homework/errors.go`)
 
-[→ Go to Part 2](02-goroutines/)
+The `errors.go` file contains 7 common concurrency bugs for students to fix:
 
----
+1. **Easy**: Missing `WaitGroup.Wait()`
+2. **Easy-Medium**: Loop variable capture bug
+3. **Medium**: Channel not closed (deadlock)
+4. **Medium-Hard**: Race condition on shared variable
+5. **Hard**: Goroutine leak with blocked channel
+6. **Hard**: Select without default in tight loop
+7. **Hard**: Deadlock with mutual channel dependency
 
-### Part 3: Synchronization (20 minutes)
-**Goal:** Master tools for coordinating goroutines
+### How to Fix Errors
 
-- **Demo 5:** Proper WaitGroup usage patterns
-- **Demo 6:** Data race detection (use `-race` flag!)
-- **Demo 7:** Mutex protects shared memory
-- **Demo 8:** Condition variables for complex state
-- **Key Insight:** Race detector is essential for development
+1. Read the code and comments
+2. Identify the bug
+3. Fix the issue
+4. Test your fix
 
-[→ Go to Part 3](03-synchronization/)
-
----
-
-### Part 4: Channels (25 minutes)
-**Goal:** Master Go's idiomatic communication primitive
-
-- **Demo 9:** Unbuffered channels = synchronization
-- **Demo 10:** Buffered channels = decoupling
-- **Demo 11:** Closing channels and range iteration
-- **Demo 12:** Worker pool pattern (practical!)
-- **Key Insight:** "Don't communicate by sharing memory; share memory by communicating"
-
-[→ Go to Part 4](04-channels/)
-
----
-
-## 🎓 For Teachers
-
-### Teaching Materials
-- **[Teacher's Guide](teacher-guide.md)** - Detailed lesson plan with timing, questions, and tips
-- **[Slides](slides.md)** - Presentation slides with Mermaid diagrams
-- **[Lesson Plan](LESSON_PLAN.md)** - Overall architecture and structure
-
-### Recommended Approach
-1. Start with motivation (show the problem, then the solution)
-2. Live code each demo with student participation
-3. Ask questions throughout (see teacher's guide)
-4. Emphasize race detector usage
-5. End with practical worker pool pattern
-
-### Key Teaching Points
-- Always show `-race` flag in action
-- Emphasize "who closes which channel"
-- Draw diagrams for worker pool
-- Let students predict output before running
-- Encourage experimentation
-
----
-
-## 📚 For Students
-
-### Study Path
-1. Read each section's README before running demos
-2. Run demos multiple times to see non-deterministic behavior
-3. Experiment: modify code and predict outcomes
-4. Complete homework assignments
-5. Use `-race` flag for all your concurrent code
-
-### Homework Assignments
-Three practical assignments to solidify your learning:
-
-1. **Rate Limiter** - Build concurrent rate limiter with semaphore pattern
-2. **Pipeline** - Create 3-stage pipeline with context cancellation
-3. **Trace Analysis** - Profile and optimize concurrent code
-
-[→ View Homework](homework/)
-
----
-
-## 🔑 Key Concepts
+## 📖 Key Concepts
 
 ### Goroutines
-```go
-go function(args)  // Launch goroutine
-```
-- Lightweight (~2KB initial stack)
-- Cheap to create (thousands easily)
-- Scheduled by Go runtime
-
-### Synchronization
-```go
-var wg sync.WaitGroup
-wg.Add(1)
-go func() {
-    defer wg.Done()
-    // work
-}()
-wg.Wait()
-```
+- Lightweight threads managed by Go runtime
+- Use `go` keyword to launch
+- Always synchronize completion
 
 ### Channels
-```go
-ch := make(chan int)      // Unbuffered
-ch := make(chan int, 10)  // Buffered
-ch <- value               // Send
-value := <-ch             // Receive
-close(ch)                 // Close (sender only!)
-```
+- Communication between goroutines
+- Buffered vs unbuffered
+- Always close when done sending
+- Use directional channels for safety
 
-### Race Detection
+### Synchronization
+- `sync.WaitGroup` - Wait for goroutines to complete
+- `sync.Mutex` - Protect shared data
+- Channels - Communicate and synchronize
+
+### Patterns
+- **Worker Pool**: Fixed number of workers processing jobs
+- **Pipeline**: Chain of processing stages
+- **Fan-Out/Fan-In**: Distribute work, collect results
+- **Timeout**: Limit operation duration
+- **Rate Limiting**: Control throughput
+- **Semaphore**: Limit concurrent operations
+
+## 🎓 Learning Path
+
+1. Start with `demos/` to understand basics
+2. Study `channels/` examples in order
+3. Implement homework tasks in `homework/tasks.go`
+4. Run tests to verify implementations
+5. Fix bugs in `homework/errors.go`
+6. Run benchmarks to understand performance
+
+## 🔧 Makefile Commands
+
 ```bash
-go run -race main.go
-go test -race ./...
+make help          # Show all available commands
+make test          # Run all tests
+make test-verbose  # Run tests with verbose output
+make bench         # Run all benchmarks
+make race          # Run tests with race detector
+make coverage      # Generate coverage report
+make clean         # Clean test cache
+make run-demos     # Run all demo files
+make run-channels  # Run all channel examples
 ```
 
----
+## 📝 Tips
 
-## 🎯 Common Patterns
-
-### Worker Pool (Fan-Out/Fan-In)
-```go
-jobs := make(chan int, 100)
-results := make(chan int, 100)
-
-// Start workers
-for w := 1; w <= 3; w++ {
-    go worker(jobs, results)
-}
-
-// Send jobs
-for j := 1; j <= 10; j++ {
-    jobs <- j
-}
-close(jobs)
-
-// Collect results
-for r := range results {
-    fmt.Println(r)
-}
-```
-
-### Pipeline
-```go
-gen := generate(nums...)
-filtered := filter(gen)
-squared := square(filtered)
-
-for result := range squared {
-    fmt.Println(result)
-}
-```
-
-### Context Cancellation
-```go
-ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
-defer cancel()
-
-select {
-case <-ctx.Done():
-    return ctx.Err()
-case result := <-ch:
-    return result
-}
-```
-
----
-
-## ⚠️ Common Pitfalls
-
-### 1. Loop Variable Capture
-```go
-// ❌ WRONG
-for i := 0; i < 5; i++ {
-    go func() {
-        fmt.Println(i)  // All print 5!
-    }()
-}
-
-// ✅ CORRECT
-for i := 0; i < 5; i++ {
-    go func(i int) {
-        fmt.Println(i)
-    }(i)
-}
-```
-
-### 2. Forgetting to Close Channels
-```go
-// ❌ WRONG - goroutine leak
-go func() {
-    for v := range ch {  // Hangs forever if ch never closed
-        process(v)
-    }
-}()
-
-// ✅ CORRECT
-go func() {
-    defer close(ch)
-    for i := 0; i < 10; i++ {
-        ch <- i
-    }
-}()
-```
-
-### 3. Closing from Wrong Side
-```go
-// ❌ WRONG - receiver closes
-go func() {
-    for v := range ch {
-        process(v)
-    }
-    close(ch)  // Panic if sender still sending!
-}()
-
-// ✅ CORRECT - sender closes
-go func() {
-    defer close(ch)
-    for i := 0; i < 10; i++ {
-        ch <- i
-    }
-}()
-```
-
----
-
-## 📖 Resources
-
-### Official Documentation
-- [Effective Go - Concurrency](https://go.dev/doc/effective_go#concurrency)
-- [Go Blog - Concurrency Patterns](https://go.dev/blog/pipelines)
-- [Go Blog - Context](https://go.dev/blog/context)
-- [Go Memory Model](https://go.dev/ref/mem)
-
-### Tools
-- [Race Detector](https://go.dev/blog/race-detector)
-- [Execution Tracer](https://go.dev/blog/execution-tracer)
-- [pprof Profiler](https://go.dev/blog/pprof)
-
-### Videos
-- "Concurrency is not Parallelism" by Rob Pike
-- "Go Concurrency Patterns" by Rob Pike
-- "Advanced Go Concurrency Patterns" by Sameer Ajmani
-
-### Books
-- "Concurrency in Go" by Katherine Cox-Buday
-- "Go in Action" by William Kennedy
-- "The Go Programming Language" by Donovan & Kernighan
-
----
+1. **Always use WaitGroup** when launching goroutines
+2. **Close channels** when done sending
+3. **Pass loop variables** as parameters to goroutines
+4. **Use mutex** for shared data access
+5. **Test with race detector** (`-race` flag)
+6. **Use buffered channels** to prevent blocking
+7. **Handle timeouts** for long-running operations
+8. **Use select** for multiple channel operations
 
 ## 🤝 Contributing
 
-Found an issue or have a suggestion? Please open an issue or submit a pull request!
-
----
+Feel free to submit issues and enhancement requests!
 
 ## 📄 License
 
-This educational material is provided as-is for learning purposes.
-
----
-
-## 🎓 About This Lesson
-
-This lesson was designed to teach Go concurrency through progressive, hands-on examples. Each demo builds on the previous one, moving from basic concepts to practical patterns you'll use in real projects.
-
-**Duration:** 90 minutes  
-**Level:** Intermediate  
-**Format:** Live coding with interactive discussions
-
----
-
-## 🚀 Next Steps
-
-1. Complete all demos in order
-2. Experiment with modifications
-3. Complete homework assignments
-4. Build your own concurrent programs
-5. Always use `-race` flag during development!
-
-**Happy concurrent programming! 🎉**
+This course material is provided for educational purposes.
